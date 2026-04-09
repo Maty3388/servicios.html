@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAX-TV Online | Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white pb-20 font-sans">
+    <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-4 text-center shadow-lg sticky top-0 z-50">
+        <h3 class="font-black text-sm uppercase italic tracking-tighter">¡SORTEO MAÑANA 10 DE ABRIL! 🎁</h3>
+    </div>
+    <div class="max-w-5xl mx-auto p-6 mt-6">
+        <header class="flex justify-between items-center mb-10 border-b border-slate-800 pb-6">
+            <h1 class="text-3xl font-black text-blue-500 italic uppercase tracking-tighter">MAX-TV</h1>
+            <div class="text-right">
+                <p class="text-[10px] text-gray-500 font-bold uppercase">Soporte 24/7</p>
+                <p class="text-green-400 font-bold text-sm">ONLINE</p>
+            </div>
+        </header>
+        <div id="contenedor-web" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+    </div>
+    <a href="https://wa.me/543764000000" class="fixed bottom-6 right-6 bg-green-500 w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-2xl">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <script>
+        const { createClient } = supabase;
+        const _supabase = createClient('https://bvsbebnvzecfwgsskoqn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2c2JlYm52emVjZndnc3Nrb3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MDU0NTcsImV4cCI6MjA5MTI4MTQ1N30.ApD2CEkM-E0J9vpLkBJigiWG1bK3X8NpiQ1AFnue7DU');
+
+        async function cargarTienda() {
+            const { data: productos, error } = await _supabase.from('productos').select('*').order('created_at', { ascending: false });
+            const contenedor = document.getElementById('contenedor-web');
+            if(error || !productos || productos.length === 0) {
+                contenedor.innerHTML = "<p class='col-span-full text-center py-20 opacity-50 font-bold'>No hay servicios activos.</p>";
+                return;
+            }
+            contenedor.innerHTML = productos.map(p => `
+                <div class="bg-slate-800 border border-slate-700 p-6 rounded-3xl shadow-xl group">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="bg-blue-500/10 p-4 rounded-2xl text-blue-500"><i class="fas ${p.icon || 'fa-tv'} text-2xl"></i></div>
+                        <span class="bg-green-500/20 text-green-400 text-[10px] px-3 py-1 rounded-full border border-green-500/30 font-black uppercase tracking-widest">Activo</span>
+                    </div>
+                    <h3 class="text-xl font-black uppercase mb-1">${p.nombre}</h3>
+                    <div class="flex items-center justify-between mt-6">
+                        <span class="text-2xl font-black">$${p.precio}</span>
+                        <a href="${p.link}" target="_blank" class="bg-blue-600 px-6 py-3 rounded-2xl font-black text-sm transition active:scale-95 shadow-lg shadow-blue-900/40">COMPRAR</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        cargarTienda();
+    </script>
+</body>
+</html>
